@@ -4,4 +4,6 @@
 export { default as SearchIcon } from '@/assets/icons/search.svg?react'
 export { default as ChevronDownIcon } from '@/assets/icons/chevron-down.svg?react'
 export { default as CloseIcon } from '@/assets/icons/close.svg?react'
-export { default as HeartIcon } from '@/assets/icons/heart.svg?react'
+// 찜: 안 찜(외곽선) / 찜(채움) 두 상태
+export { default as HeartOutlineIcon } from '@/assets/icons/heart-outline.svg?react'
+export { default as HeartFillIcon } from '@/assets/icons/heart-fill.svg?react'
