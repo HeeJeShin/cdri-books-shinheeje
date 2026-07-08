@@ -5,9 +5,9 @@ import { cn } from '@/utils/cn'
 // 글자와 언더바 사이는 pb-2(8px)로 띄우고, 언더바 두께는 2px. 폰트는 body1/500.
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'relative pb-2 text-body1 font-medium text-text-primary transition-colors',
+    'relative pb-3 text-body1 font-medium text-text-primary transition-colors',
     isActive &&
-      'after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-primary',
+      'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:rounded-full after:bg-primary',
   )
 
 // Figma 기준: 로고는 화면 왼쪽 가까이(≈160/1920), 바디(960 중앙)보다 훨씬 왼쪽.
