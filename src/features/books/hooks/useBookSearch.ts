@@ -22,8 +22,13 @@ export const useBookSearch = (params: UseBookSearchParams) => {
 
   return useInfiniteQuery({
     queryKey: bookKeys.search({ ...params, query }),
-    queryFn: ({ pageParam, signal }) =>
-      searchBooks({ ...params, query, page: pageParam, size: PAGE_SIZE }, signal),
+    queryFn: async ({ pageParam, signal }) => {
+      const response = await searchBooks(
+        { ...params, query, page: pageParam, size: PAGE_SIZE },
+        signal,
+      )
+      return response
+    },
     initialPageParam: 1,
     // is_end가 false일 때만 다음 페이지 번호를 반환 (마지막 페이지면 더 안 부름)
     getNextPageParam: (lastPage, allPages) =>

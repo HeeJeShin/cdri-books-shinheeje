@@ -76,10 +76,14 @@ export const kakaoGet = async <T>(
 
   // 실패 응답 처리: 카카오가 내려주는 에러 본문({ errorType, message })을 최대한 활용
   if (!response.ok) {
-    const detail = await response
-      .json()
-      .then((body: { message?: string }) => body?.message)
-      .catch(() => undefined)
+    let detail: string | undefined
+    try {
+      const body = (await response.json()) as { message?: string }
+      detail = body?.message
+    } catch {
+      // 에러 응답이 JSON이 아니면 상세 메시지는 생략
+      detail = undefined
+    }
     throw new KakaoApiError(response.status, detail)
   }
 
