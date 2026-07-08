@@ -1,0 +1,34 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens (Figma: 30COS-Books)
+ * Tailwind v4 reads these as utility classes, e.g. text-primary, bg-palette-gray.
+ */
+@theme {
+  --color-primary: #4880ee;
+  --color-text-primary: #353c49;
+  --color-text-secondary: #6d7582;
+  --color-text-subtitle: #8d94a0;
+  --color-accent-red: #e84118;
+  --color-palette-gray: #dadada;
+  --color-palette-lightgray: #f2f4f6;
+  --color-surface: #ffffff;
+
+  --font-sans:
+    'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
+    'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+}
