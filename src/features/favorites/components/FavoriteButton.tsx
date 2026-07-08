@@ -9,7 +9,7 @@ interface FavoriteButtonProps {
   size?: number
 }
 
-/** Heart toggle overlaid on a book thumbnail. */
+/** 책 썸네일 위에 얹는 찜(하트) 토글 버튼. 하트는 항상 채움, 색만 바꿉니다. */
 export const FavoriteButton = ({ book, size = 16 }: FavoriteButtonProps) => {
   const favorited = useIsFavorite(favoriteKey(book))
 
@@ -24,7 +24,7 @@ export const FavoriteButton = ({ book, size = 16 }: FavoriteButtonProps) => {
         favorited ? 'text-red' : 'text-white hover:text-red/70',
       )}
     >
-      <HeartIcon filled width={size} height={size} strokeWidth={1.5} />
+      <HeartIcon width={size} height={size} />
     </button>
   )
 }
