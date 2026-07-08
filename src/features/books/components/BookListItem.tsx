@@ -2,9 +2,9 @@ import { useState } from 'react'
 import type { Book } from '@/types/book'
 import { Button } from '@/components/ui/Button'
 import { ChevronDownIcon } from '@/components/ui/icons'
-import { formatPrice } from '@/utils/formatPrice'
 import { cn } from '@/utils/cn'
 import { BookThumbnail } from './BookThumbnail'
+import { BookPrice } from './BookPrice'
 
 interface BookListItemProps {
   book: Book
@@ -12,12 +12,6 @@ interface BookListItemProps {
 
 const openPurchase = (url: string) =>
   window.open(url, '_blank', 'noopener,noreferrer')
-
-const hasDiscount = (book: Book) =>
-  book.sale_price >= 0 && book.sale_price < book.price
-
-const displayPrice = (book: Book) =>
-  book.sale_price >= 0 ? book.sale_price : book.price
 
 const DetailToggle = ({
   expanded,
@@ -74,26 +68,7 @@ export const BookListItem = ({ book }: BookListItemProps) => {
             </div>
 
             <div>
-              {hasDiscount(book) ? (
-                <div className="mb-4 space-y-1 text-right">
-                  <p className="flex items-baseline justify-end gap-2 text-text-subtitle">
-                    <span className="text-body2">원가</span>
-                    <span className="text-caption line-through">
-                      {formatPrice(book.price)}
-                    </span>
-                  </p>
-                  <p className="flex items-baseline justify-end gap-2">
-                    <span className="text-body2 text-text-primary">할인가</span>
-                    <span className="text-title3 font-bold">
-                      {formatPrice(book.sale_price)}
-                    </span>
-                  </p>
-                </div>
-              ) : (
-                <p className="mb-4 text-right text-title3 font-bold">
-                  {formatPrice(displayPrice(book))}
-                </p>
-              )}
+              <BookPrice book={book} variant="detailed" className="mb-4" />
 
               <Button
                 className="w-full"
@@ -122,9 +97,7 @@ export const BookListItem = ({ book }: BookListItemProps) => {
           )}
         </div>
 
-        <p className="shrink-0 text-title3 font-bold">
-          {formatPrice(displayPrice(book))}
-        </p>
+        <BookPrice book={book} className="shrink-0" />
 
         <div className="flex shrink-0 items-center gap-2">
           <Button className="w-[115px]" onClick={() => openPurchase(book.url)}>
