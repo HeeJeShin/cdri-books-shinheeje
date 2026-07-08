@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Test / E2E artifacts
+coverage
+playwright-report
+test-results
+/playwright/.cache
+
 # Env (API keys) — do not commit
 .env
 .env.*
