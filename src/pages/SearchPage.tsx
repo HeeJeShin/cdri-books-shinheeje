@@ -61,7 +61,12 @@ export const SearchPage = () => {
       />
 
       <div className="mt-6">
-        <SearchCountText label="도서 검색 결과" count={totalCount} />
+        {/* 검색어가 있으면 "검색어" 검색 결과 총 N건, 없으면 검색 결과 총 0건 */}
+        <SearchCountText
+          label="검색 결과"
+          count={totalCount}
+          keyword={query || undefined}
+        />
       </div>
 
       {isLoading && (
