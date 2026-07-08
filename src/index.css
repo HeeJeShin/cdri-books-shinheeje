@@ -1,61 +1,23 @@
 @import 'tailwindcss';
 
-/*
- * Design tokens (Figma: certicos Books)
- * Colors, typography scale and font mirror the Figma "Style" page so the
- * whole app reads from one source of truth. Tailwind v4 exposes each token
- * as a utility (text-primary, bg-palette-lightgray, text-title1, ...).
- */
-@theme {
-  /* Palette */
-  --color-primary: #4880ee;
-  --color-red: #e84118;
-  --color-palette-gray: #dadada;
-  --color-palette-lightgray: #f2f4f6;
-  --color-black: #1a1a1a;
+/* 디자인 토큰(색상·폰트·타이포)은 tailwind.config.ts 에서 관리합니다. */
+@config '../tailwind.config.ts';
 
-  /* Text */
-  --color-text-primary: #353c49;
-  --color-text-secondary: #6d7582;
-  --color-text-subtitle: #8d94a0;
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
 
-  /* Typography scale (size / line-height) */
-  --text-title1: 24px;
-  --text-title1--line-height: 24px;
-  --text-title2: 22px;
-  --text-title2--line-height: 24px;
-  --text-title3: 18px;
-  --text-title3--line-height: 18px;
-  --text-body1: 20px;
-  --text-body1--line-height: 20px;
-  --text-body2: 14px;
-  --text-body2--line-height: 20px;
-  --text-caption: 16px;
-  --text-caption--line-height: 16px;
-  --text-small: 10px;
-  --text-small--line-height: 10px;
+  body {
+    margin: 0;
+    @apply bg-white font-sans text-text-primary antialiased;
+  }
 
-  --font-sans:
-    'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
-    'Apple SD Gothic Neo', sans-serif;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-sans);
-  color: var(--color-text-primary);
-  background-color: #ffffff;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Remove the native clear/decoration on search inputs for a clean pill. */
-input[type='search']::-webkit-search-decoration,
-input[type='search']::-webkit-search-cancel-button {
-  -webkit-appearance: none;
+  /* 검색 인풋의 기본 데코레이션 제거 (깔끔한 pill 형태 유지) */
+  input[type='search']::-webkit-search-decoration,
+  input[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
 }
