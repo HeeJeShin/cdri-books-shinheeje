@@ -8,8 +8,8 @@ test.beforeEach(async ({ page }) => {
 test('searches books and shows the result count and list', async ({ page }) => {
   await page.goto('/')
 
-  await page.getByPlaceholder('검색어를 입력하세요').fill('무라카미')
-  await page.getByPlaceholder('검색어를 입력하세요').press('Enter')
+  await page.getByLabel('도서 검색어').fill('무라카미')
+  await page.getByLabel('도서 검색어').press('Enter')
 
   await expect(page.getByText('도서 검색 결과')).toBeVisible()
   await expect(page.getByText('3', { exact: true })).toBeVisible()

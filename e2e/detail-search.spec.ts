@@ -31,12 +31,12 @@ test('detail search clears the main search pill (mutual exclusion)', async ({
   page,
 }) => {
   await page.goto('/?q=기존검색어')
-  await expect(page.getByPlaceholder('검색어를 입력하세요')).toHaveValue('기존검색어')
+  await expect(page.getByLabel('도서 검색어')).toHaveValue('기존검색어')
 
   await page.getByRole('button', { name: '상세검색' }).click()
   const dialog = page.getByRole('dialog', { name: '상세 검색' })
   await dialog.getByPlaceholder('검색어 입력').fill('무라카미')
   await dialog.getByRole('button', { name: '검색하기' }).click()
 
-  await expect(page.getByPlaceholder('검색어를 입력하세요')).toHaveValue('')
+  await expect(page.getByLabel('도서 검색어')).toHaveValue('')
 })

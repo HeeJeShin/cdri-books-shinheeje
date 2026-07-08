@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { BookSearchTarget } from '@/types/book'
 import { Button } from '@/components/ui/Button'
+import { useSearchHistory } from '../useSearchHistory'
 import { SearchBar } from './SearchBar'
 import { DetailSearchPopup } from './DetailSearchPopup'
 
@@ -24,9 +25,17 @@ export const BookSearchForm = ({
 }: BookSearchFormProps) => {
   const [input, setInput] = useState(keyword)
   const [popupOpen, setPopupOpen] = useState(false)
+  const { history, addHistory, removeHistory } = useSearchHistory()
 
   // Keep the pill in sync with URL-driven keyword changes (e.g. back/forward).
   useEffect(() => setInput(keyword), [keyword])
+
+  // 전체 검색 실행: 검색어가 있으면 검색 기록에 저장 후 검색.
+  const runNormalSearch = (value: string) => {
+    const trimmed = value.trim()
+    if (trimmed) addHistory(trimmed)
+    onNormalSearch(trimmed)
+  }
 
   const handleDetailSearch = (target: BookSearchTarget, value: string) => {
     setInput('')
@@ -39,7 +48,13 @@ export const BookSearchForm = ({
       <SearchBar
         value={input}
         onChange={setInput}
-        onSubmit={() => onNormalSearch(input.trim())}
+        onSubmit={() => runNormalSearch(input)}
+        history={history}
+        onSelectHistory={(kw) => {
+          setInput(kw)
+          runNormalSearch(kw)
+        }}
+        onRemoveHistory={removeHistory}
       />
 
       <div className="relative shrink-0">
