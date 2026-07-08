@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/utils/cn'
 
+// 액티브 메뉴: 글자는 항상 검정(text-primary) 유지, "언더바만" 파란색.
+// 글자와 언더바 사이는 pb-2(8px)로 띄우고, 언더바 두께는 2px.
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'relative text-body1 transition-colors',
-    isActive
-      ? 'font-medium text-primary after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-full after:bg-primary'
-      : 'text-text-primary hover:text-text-secondary',
+    'relative pb-2 text-body1 text-text-primary transition-colors',
+    isActive &&
+      'after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-primary',
   )
 
 export const Header = () => (
