@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { BookSearchTarget } from '@/types/book'
+import { KakaoApiError } from '@/api/kakaoClient'
 import { useBookSearch } from '@/features/books/hooks/useBookSearch'
 import { BookSearchForm } from '@/features/books/components/BookSearchForm'
 import { BookList } from '@/features/books/components/BookList'
@@ -17,10 +18,17 @@ export const SearchPage = () => {
     data,
     isLoading,
     isError,
+    error,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
   } = useBookSearch({ query, target })
+
+  // 상태코드별 한글 메시지가 있으면 그걸, 아니면 기본 문구를 보여줍니다.
+  const errorMessage =
+    error instanceof KakaoApiError
+      ? error.userMessage
+      : '검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
 
   const books = data?.pages.flatMap((page) => page.documents) ?? []
   const totalCount = data?.pages[0]?.meta.total_count ?? 0
@@ -63,9 +71,7 @@ export const SearchPage = () => {
       )}
 
       {isError && (
-        <p className="py-24 text-center text-body2 text-red">
-          검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.
-        </p>
+        <p className="py-24 text-center text-body2 text-red">{errorMessage}</p>
       )}
 
       {!isLoading && !isError && books.length === 0 && (
