@@ -1,8 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import type { BookSearchParams } from '@/types/book'
 import { searchBooks } from '../api/searchBooks'
-
-const PAGE_SIZE = 10
+import { PAGE_SIZE } from '../constants'
 
 export const bookKeys = {
   all: ['books'] as const,

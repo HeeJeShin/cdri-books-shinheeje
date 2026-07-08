@@ -1,22 +1,43 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens (Figma: 30COS-Books)
- * Tailwind v4 reads these as utility classes, e.g. text-primary, bg-palette-gray.
+ * Design tokens (Figma: certicos Books)
+ * Colors, typography scale and font mirror the Figma "Style" page so the
+ * whole app reads from one source of truth. Tailwind v4 exposes each token
+ * as a utility (text-primary, bg-palette-lightgray, text-title1, ...).
  */
 @theme {
+  /* Palette */
   --color-primary: #4880ee;
+  --color-red: #e84118;
+  --color-palette-gray: #dadada;
+  --color-palette-lightgray: #f2f4f6;
+  --color-black: #1a1a1a;
+
+  /* Text */
   --color-text-primary: #353c49;
   --color-text-secondary: #6d7582;
   --color-text-subtitle: #8d94a0;
-  --color-accent-red: #e84118;
-  --color-palette-gray: #dadada;
-  --color-palette-lightgray: #f2f4f6;
-  --color-surface: #ffffff;
+
+  /* Typography scale (size / line-height) */
+  --text-title1: 24px;
+  --text-title1--line-height: 24px;
+  --text-title2: 22px;
+  --text-title2--line-height: 24px;
+  --text-title3: 18px;
+  --text-title3--line-height: 18px;
+  --text-body1: 20px;
+  --text-body1--line-height: 20px;
+  --text-body2: 14px;
+  --text-body2--line-height: 20px;
+  --text-caption: 16px;
+  --text-caption--line-height: 16px;
+  --text-small: 10px;
+  --text-small--line-height: 10px;
 
   --font-sans:
-    'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
-    'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
+    'Apple SD Gothic Neo', sans-serif;
 }
 
 html,
@@ -29,6 +50,12 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   color: var(--color-text-primary);
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Remove the native clear/decoration on search inputs for a clean pill. */
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
 }

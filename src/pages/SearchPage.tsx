@@ -1,12 +1,17 @@
+import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import type { BookSearchTarget } from '@/types/book'
 import { useBookSearch } from '@/features/books/hooks/useBookSearch'
-import { SearchBar } from '@/features/books/components/SearchBar'
+import { BookSearchForm } from '@/features/books/components/BookSearchForm'
 import { BookList } from '@/features/books/components/BookList'
-import { Button } from '@/components/ui/Button'
+import { SearchCountText } from '@/features/books/components/SearchCountText'
+import { NoData } from '@/components/ui/NoData'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const keyword = searchParams.get('q') ?? ''
+  const query = searchParams.get('q') ?? ''
+  const target = (searchParams.get('target') as BookSearchTarget | null) ?? undefined
 
   const {
     data,
@@ -15,65 +20,71 @@ export const SearchPage = () => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useBookSearch({ query: keyword })
+  } = useBookSearch({ query, target })
 
   const books = data?.pages.flatMap((page) => page.documents) ?? []
   const totalCount = data?.pages[0]?.meta.total_count ?? 0
 
-  const handleSearch = (next: string) => {
-    setSearchParams(next ? { q: next } : {})
+  const onLoadMore = useCallback(() => fetchNextPage(), [fetchNextPage])
+  const sentinelRef = useInfiniteScroll({
+    hasMore: hasNextPage,
+    onLoadMore,
+    disabled: isFetchingNextPage,
+  })
+
+  // Normal search: drop the detail target. Detail search: keep both.
+  const handleNormalSearch = (keyword: string) => {
+    setSearchParams(keyword ? { q: keyword } : {})
+  }
+  const handleDetailSearch = (nextTarget: BookSearchTarget, keyword: string) => {
+    setSearchParams({ q: keyword, target: nextTarget })
   }
 
+  const showResults = !isLoading && !isError && books.length > 0
+
   return (
-    <section className="py-6">
-      <h1 className="mb-6 text-2xl font-bold">도서 검색</h1>
+    <section>
+      <h1 className="mb-6 text-title2 font-bold">도서 검색</h1>
 
-      <SearchBar onSearch={handleSearch} initialKeyword={keyword} />
+      <BookSearchForm
+        keyword={target ? '' : query}
+        onNormalSearch={handleNormalSearch}
+        onDetailSearch={handleDetailSearch}
+      />
 
-      {keyword && (
-        <p className="mt-6 text-sm text-text-secondary">
-          도서 검색 결과 총{' '}
-          <span className="font-bold text-primary">
-            {totalCount.toLocaleString('ko-KR')}
-          </span>
-          건
+      <div className="mt-6">
+        <SearchCountText label="도서 검색 결과" count={totalCount} />
+      </div>
+
+      {isLoading && (
+        <p className="py-24 text-center text-body2 text-text-secondary">
+          검색 중입니다…
         </p>
       )}
 
-      <div className="mt-4">
-        {isLoading && (
-          <p className="py-20 text-center text-text-secondary">검색 중입니다…</p>
-        )}
+      {isError && (
+        <p className="py-24 text-center text-body2 text-red">
+          검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.
+        </p>
+      )}
 
-        {isError && (
-          <p className="py-20 text-center text-accent-red">
-            검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.
-          </p>
-        )}
+      {!isLoading && !isError && books.length === 0 && (
+        <NoData message="검색된 결과가 없습니다." />
+      )}
 
-        {!isLoading && !isError && keyword && books.length === 0 && (
-          <p className="py-20 text-center text-text-secondary">
-            검색된 결과가 없습니다.
-          </p>
-        )}
-
-        {!isError && books.length > 0 && (
-          <>
+      {showResults && (
+        <>
+          <div className="mt-4">
             <BookList books={books} />
-            {hasNextPage && (
-              <div className="mt-8 flex justify-center">
-                <Button
-                  variant="secondary"
-                  onClick={() => fetchNextPage()}
-                  disabled={isFetchingNextPage}
-                >
-                  {isFetchingNextPage ? '불러오는 중…' : '결과 더보기'}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          </div>
+          <div ref={sentinelRef} aria-hidden="true" />
+          {isFetchingNextPage && (
+            <p className="py-6 text-center text-body2 text-text-secondary">
+              불러오는 중…
+            </p>
+          )}
+        </>
+      )}
     </section>
   )
 }

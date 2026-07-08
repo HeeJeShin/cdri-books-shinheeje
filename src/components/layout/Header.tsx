@@ -1,26 +1,29 @@
 import { NavLink } from 'react-router-dom'
+import { cn } from '@/utils/cn'
 
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  [
-    'relative py-2 text-base transition-colors',
-    isActive ? 'text-text-primary font-medium' : 'text-text-secondary',
-  ].join(' ')
+const navItemClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    'relative text-body1 transition-colors',
+    isActive
+      ? 'font-medium text-primary after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-full after:bg-primary'
+      : 'text-text-primary hover:text-text-secondary',
+  )
 
-export const Header = () => {
-  return (
-    <header className="mx-auto flex w-full max-w-[960px] items-center justify-between px-4 py-5">
-      <NavLink to="/" className="text-xl font-bold tracking-tight">
+export const Header = () => (
+  <header className="sticky top-0 z-20 border-b border-palette-gray bg-white">
+    <div className="relative mx-auto flex h-20 max-w-[1200px] items-center px-6 md:px-10">
+      <NavLink to="/" className="text-title1 font-bold tracking-tight">
         CERTICOS BOOKS
       </NavLink>
 
-      <nav className="flex items-center gap-8">
-        <NavLink to="/" end className={navLinkClass}>
+      <nav className="absolute left-1/2 flex -translate-x-1/2 items-center gap-10">
+        <NavLink to="/" end className={navItemClass}>
           도서 검색
         </NavLink>
-        <NavLink to="/favorites" className={navLinkClass}>
+        <NavLink to="/favorites" className={navItemClass}>
           내가 찜한 책
         </NavLink>
       </nav>
-    </header>
-  )
-}
+    </div>
+  </header>
+)

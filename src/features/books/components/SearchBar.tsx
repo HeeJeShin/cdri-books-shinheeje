@@ -1,48 +1,37 @@
-import { type FormEvent, useState } from 'react'
+import { type FormEvent } from 'react'
+import { SearchIcon } from '@/components/ui/icons'
 
 interface SearchBarProps {
-  /** Fired when the user submits a non-empty keyword. */
-  onSearch: (keyword: string) => void
-  initialKeyword?: string
+  value: string
+  onChange: (value: string) => void
+  onSubmit: () => void
+  placeholder?: string
 }
 
-const SearchIcon = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    aria-hidden="true"
-  >
-    <circle cx="11" cy="11" r="7" />
-    <path d="m21 21-4.3-4.3" strokeLinecap="round" />
-  </svg>
-)
-
-export const SearchBar = ({ onSearch, initialKeyword = '' }: SearchBarProps) => {
-  const [value, setValue] = useState(initialKeyword)
-
+/** The rounded search pill. Controlled by the parent so its value can be
+ *  reset when a detail search takes over (mutual exclusion). */
+export const SearchBar = ({
+  value,
+  onChange,
+  onSubmit,
+  placeholder = '검색어를 입력하세요',
+}: SearchBarProps) => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const keyword = value.trim()
-    if (keyword) onSearch(keyword)
+    onSubmit()
   }
 
   return (
-    <form onSubmit={handleSubmit} role="search">
-      <label className="flex h-12 items-center gap-2 rounded-full bg-palette-lightgray px-5">
-        <span className="text-text-subtitle">
-          <SearchIcon />
-        </span>
+    <form onSubmit={handleSubmit} role="search" className="max-w-[480px] flex-1">
+      <label className="flex h-[50px] items-center gap-2 rounded-full bg-palette-lightgray px-5">
+        <SearchIcon className="shrink-0 text-text-primary" width={20} height={20} />
         <input
           type="search"
           value={value}
-          onChange={(event) => setValue(event.target.value)}
-          placeholder="검색어를 입력하세요"
-          className="w-full bg-transparent text-base outline-none placeholder:text-text-subtitle"
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
           aria-label="도서 검색어"
+          className="w-full bg-transparent text-caption outline-none placeholder:text-text-subtitle"
         />
       </label>
     </form>

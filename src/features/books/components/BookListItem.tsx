@@ -1,97 +1,138 @@
 import { useState } from 'react'
 import type { Book } from '@/types/book'
-import { formatPrice } from '@/utils/formatPrice'
 import { Button } from '@/components/ui/Button'
+import { ChevronDownIcon } from '@/components/ui/icons'
+import { formatPrice } from '@/utils/formatPrice'
+import { cn } from '@/utils/cn'
+import { BookThumbnail } from './BookThumbnail'
 
 interface BookListItemProps {
   book: Book
 }
 
-const Chevron = ({ open }: { open: boolean }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={open ? 'rotate-180 transition-transform' : 'transition-transform'}
-    aria-hidden="true"
+const openPurchase = (url: string) =>
+  window.open(url, '_blank', 'noopener,noreferrer')
+
+const hasDiscount = (book: Book) =>
+  book.sale_price >= 0 && book.sale_price < book.price
+
+const displayPrice = (book: Book) =>
+  book.sale_price >= 0 ? book.sale_price : book.price
+
+const DetailToggle = ({
+  expanded,
+  onToggle,
+}: {
+  expanded: boolean
+  onToggle: () => void
+}) => (
+  <Button
+    variant="secondary"
+    className="w-[115px]"
+    aria-expanded={expanded}
+    onClick={onToggle}
   >
-    <path d="m6 9 6 6 6-6" />
-  </svg>
+    상세보기
+    <ChevronDownIcon className={cn('transition-transform', expanded && 'rotate-180')} />
+  </Button>
 )
 
 export const BookListItem = ({ book }: BookListItemProps) => {
   const [expanded, setExpanded] = useState(false)
-  const authorLabel = book.authors.join(', ')
+  const author = book.authors.join(', ')
+  const toggle = () => setExpanded((prev) => !prev)
+
+  if (expanded) {
+    return (
+      <li className="border-b border-palette-gray">
+        <div className="flex gap-8 py-6">
+          <BookThumbnail
+            book={book}
+            className="h-[280px] w-[210px]"
+            heartSize={24}
+          />
+
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="flex items-baseline gap-2">
+              <h3 className="truncate text-body1 font-bold">{book.title}</h3>
+              {author && (
+                <span className="shrink-0 text-caption text-text-secondary">
+                  {author}
+                </span>
+              )}
+            </div>
+
+            <h4 className="mt-4 text-title3 font-bold">책 소개</h4>
+            <p className="mt-3 text-body2 leading-6 whitespace-pre-line text-text-secondary">
+              {book.contents ? `${book.contents}...` : '소개 정보가 없습니다.'}
+            </p>
+          </div>
+
+          <div className="flex w-[240px] shrink-0 flex-col justify-between">
+            <div className="flex justify-end">
+              <DetailToggle expanded={expanded} onToggle={toggle} />
+            </div>
+
+            <div>
+              {hasDiscount(book) ? (
+                <div className="mb-4 space-y-1 text-right">
+                  <p className="flex items-baseline justify-end gap-2 text-text-subtitle">
+                    <span className="text-body2">원가</span>
+                    <span className="text-caption line-through">
+                      {formatPrice(book.price)}
+                    </span>
+                  </p>
+                  <p className="flex items-baseline justify-end gap-2">
+                    <span className="text-body2 text-text-primary">할인가</span>
+                    <span className="text-title3 font-bold">
+                      {formatPrice(book.sale_price)}
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <p className="mb-4 text-right text-title3 font-bold">
+                  {formatPrice(displayPrice(book))}
+                </p>
+              )}
+
+              <Button
+                className="w-full"
+                onClick={() => openPurchase(book.url)}
+              >
+                구매하기
+              </Button>
+            </div>
+          </div>
+        </div>
+      </li>
+    )
+  }
 
   return (
-    <li className="border-b border-palette-lightgray">
-      <div className="flex items-center gap-6 py-6">
-        <img
-          src={book.thumbnail || undefined}
-          alt={book.title}
-          className="h-[68px] w-12 shrink-0 rounded object-cover"
-          loading="lazy"
-        />
+    <li className="border-b border-palette-gray">
+      <div className="flex items-center gap-8 py-4">
+        <BookThumbnail book={book} className="h-[68px] w-12" heartSize={16} />
 
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <p className="truncate text-lg font-bold">{book.title}</p>
-          {authorLabel && (
-            <p className="shrink-0 text-sm text-text-secondary">{authorLabel}</p>
+        <div className="flex min-w-0 flex-1 items-baseline gap-3">
+          <h3 className="truncate text-title3 font-bold">{book.title}</h3>
+          {author && (
+            <span className="shrink-0 truncate text-body2 text-text-secondary">
+              {author}
+            </span>
           )}
         </div>
 
-        <p className="shrink-0 text-lg font-bold">
-          {formatPrice(book.sale_price >= 0 ? book.sale_price : book.price)}
+        <p className="shrink-0 text-title3 font-bold">
+          {formatPrice(displayPrice(book))}
         </p>
 
-        <div className="flex shrink-0 items-center gap-3">
-          <Button
-            size="sm"
-            onClick={() => window.open(book.url, '_blank', 'noopener,noreferrer')}
-          >
+        <div className="flex shrink-0 items-center gap-2">
+          <Button className="w-[115px]" onClick={() => openPurchase(book.url)}>
             구매하기
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            aria-expanded={expanded}
-            aria-label={expanded ? '상세 접기' : '상세 보기'}
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            상세보기
-            <span className="ml-1">
-              <Chevron open={expanded} />
-            </span>
-          </Button>
+          <DetailToggle expanded={expanded} onToggle={toggle} />
         </div>
       </div>
-
-      {expanded && (
-        <div className="flex gap-8 pb-8">
-          <img
-            src={book.thumbnail || undefined}
-            alt={book.title}
-            className="h-[280px] w-[200px] shrink-0 rounded object-cover"
-            loading="lazy"
-          />
-          <div className="flex min-w-0 flex-1 flex-col">
-            <h3 className="text-lg font-bold">책 소개</h3>
-            <p className="mt-3 whitespace-pre-line text-sm leading-6 text-text-secondary">
-              {book.contents ? `${book.contents}...` : '소개 정보가 없습니다.'}
-            </p>
-            {book.price > 0 && book.sale_price >= 0 && book.sale_price < book.price && (
-              <p className="mt-6 text-sm text-text-subtitle line-through">
-                원가 {formatPrice(book.price)}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
     </li>
   )
 }
