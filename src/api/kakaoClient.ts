@@ -1,6 +1,7 @@
 // 카카오 REST API 공통 클라이언트
 // 앱의 모든 카카오 호출은 이 파일의 kakaoGet 하나만 거칩니다.
 // (기본 URL · 인증 헤더 · 에러 처리를 여기 한 곳에서 관리)
+import { env } from '@/config/env'
 
 /** HTTP 상태코드를 사용자에게 보여줄 한글 메시지로 바꿔줍니다. */
 const messageByStatus = (status: number): string => {
@@ -51,8 +52,8 @@ export const kakaoGet = async <T>(
   params: Record<string, string | number | undefined>,
   signal?: AbortSignal,
 ): Promise<T> => {
-  const apiKey = import.meta.env.VITE_KAKAO_API_KEY
-  const baseUrl = import.meta.env.VITE_KAKAO_API_BASE_URL
+  const apiKey = env.kakaoApiKey
+  const baseUrl = env.kakaoApiBaseUrl
 
   // 키가 없으면 네트워크 요청을 보내기 전에 즉시 중단
   if (!apiKey) {
