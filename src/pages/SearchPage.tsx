@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { BookSearchTarget } from '@/types/book'
 import { KakaoApiError } from '@/api/kakaoClient'
@@ -6,23 +5,17 @@ import { useBookSearch } from '@/features/books/hooks/useBookSearch'
 import { BookSearchForm } from '@/features/books/components/BookSearchForm'
 import { BookList } from '@/features/books/components/BookList'
 import { SearchCountText } from '@/features/books/components/SearchCountText'
+import { getTotalPages } from '@/features/books/constants'
 import { NoData } from '@/components/ui/NoData'
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { Pagination } from '@/components/ui/Pagination'
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
   const target = (searchParams.get('target') as BookSearchTarget | null) ?? undefined
+  const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useBookSearch({ query, target })
+  const { data, isLoading, isError, error } = useBookSearch({ query, target, page })
 
   // 상태코드별 한글 메시지가 있으면 그걸, 아니면 기본 문구를 보여줍니다.
   const errorMessage =
@@ -30,17 +23,20 @@ export const SearchPage = () => {
       ? error.userMessage
       : '검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
 
-  const books = data?.pages.flatMap((page) => page.documents) ?? []
-  const totalCount = data?.pages[0]?.meta.total_count ?? 0
+  const books = data?.documents ?? []
+  const totalCount = data?.meta.total_count ?? 0
+  const totalPages = getTotalPages(data?.meta.pageable_count ?? 0)
 
-  const onLoadMore = useCallback(() => fetchNextPage(), [fetchNextPage])
-  const sentinelRef = useInfiniteScroll({
-    hasMore: hasNextPage,
-    onLoadMore,
-    disabled: isFetchingNextPage,
-  })
+  // 검색어/타깃을 유지한 채 페이지만 변경. 페이지 이동 시 상단으로 스크롤.
+  const goToPage = (nextPage: number) => {
+    const params: Record<string, string> = { q: query }
+    if (target) params.target = target
+    if (nextPage > 1) params.page = String(nextPage)
+    setSearchParams(params)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
-  // Normal search: drop the detail target. Detail search: keep both.
+  // 전체 검색: target 제거(→ page도 초기화). 상세 검색: target 유지(→ page 초기화).
   const handleNormalSearch = (keyword: string) => {
     setSearchParams(keyword ? { q: keyword } : {})
   }
@@ -88,12 +84,11 @@ export const SearchPage = () => {
           <div className="mt-4">
             <BookList books={books} />
           </div>
-          <div ref={sentinelRef} aria-hidden="true" />
-          {isFetchingNextPage && (
-            <p className="py-6 text-center text-body2 text-text-secondary">
-              불러오는 중…
-            </p>
-          )}
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+          />
         </>
       )}
     </section>
