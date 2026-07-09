@@ -14,12 +14,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  // 포트를 고정합니다. 포트(origin)가 바뀌면 localStorage(찜 목록)도 분리되므로,
-  // 개발 중에도 찜 목록이 유지되도록 항상 5173을 쓰게 합니다.
-  server: {
-    port: 5173,
-    strictPort: true,
-  },
   test: {
     globals: true,
     environment: 'jsdom',
