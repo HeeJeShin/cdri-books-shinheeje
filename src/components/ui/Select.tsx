@@ -42,7 +42,7 @@ export const Select = <T extends string>({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
-        className="flex w-full items-center gap-3 border-b border-palette-gray pb-2 text-body2 font-bold text-text-primary"
+        className="flex w-full items-center justify-between gap-2 border-b border-palette-gray pb-2 text-body2 font-bold text-text-primary"
       >
         {currentLabel}
         <ChevronDownIcon
