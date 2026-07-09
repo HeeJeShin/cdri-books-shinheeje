@@ -1,8 +1,8 @@
-import type { Book } from '@/types/book'
+import { type Book, bookKey } from '@/types/book'
 import { HeartFillIcon, HeartOutlineIcon } from '@/components/ui/icons'
 import { toast } from '@/components/ui/toast'
 import { cn } from '@/utils/cn'
-import { favoriteKey, favoritesStore } from '../favoritesStore'
+import { favoritesStore } from '../favoritesStore'
 import { useIsFavorite } from '../useFavorites'
 
 interface FavoriteButtonProps {
@@ -16,7 +16,7 @@ interface FavoriteButtonProps {
  * hover 시 살짝 커지고(scale-110) 빨간색으로 강조됩니다.
  */
 export const FavoriteButton = ({ book, size = 16 }: FavoriteButtonProps) => {
-  const favorited = useIsFavorite(favoriteKey(book))
+  const favorited = useIsFavorite(bookKey(book))
   const HeartIcon = favorited ? HeartFillIcon : HeartOutlineIcon
 
   const handleClick = () => {

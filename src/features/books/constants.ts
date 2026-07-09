@@ -7,6 +7,12 @@ export const SEARCH_TARGET_OPTIONS: { value: BookSearchTarget; label: string }[]
   { value: 'publisher', label: '출판사' },
 ]
 
+/** URL 등 외부 문자열이 유효한 검색 대상인지 검증하는 타입가드. */
+export const isBookSearchTarget = (
+  value: string | null,
+): value is BookSearchTarget =>
+  SEARCH_TARGET_OPTIONS.some((option) => option.value === value)
+
 /** Books returned per page (Figma: "페이지 당 10개 아이템"). */
 export const PAGE_SIZE = 10
 

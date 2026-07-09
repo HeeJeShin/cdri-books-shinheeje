@@ -39,3 +39,7 @@ export interface BookSearchParams {
   page?: number
   size?: number
 }
+
+/** 도서 고유 키 (ISBN 우선, 없으면 상세 URL). 목록 key·찜·중복제거에서 공용. */
+export const bookKey = (book: Pick<Book, 'isbn' | 'url'>): string =>
+  book.isbn || book.url

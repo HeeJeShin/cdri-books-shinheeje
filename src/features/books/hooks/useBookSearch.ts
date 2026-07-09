@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { BookSearchParams } from '@/types/book'
+import { type BookSearchParams, bookKey } from '@/types/book'
 import { KakaoApiError, isRetryableStatus } from '@/api/kakaoClient'
 import { uniqueBy } from '@/utils/uniqueBy'
 import { searchBooks } from '../api/searchBooks'
@@ -37,7 +37,7 @@ export const useBookSearch = ({ query, target, page = 1 }: UseBookSearchParams) 
     // (같은 키가 여러 번 렌더되면 React key 충돌 + 찜 상태가 겹쳐 보이는 문제 발생)
     select: (data) => ({
       ...data,
-      documents: uniqueBy(data.documents, (book) => book.isbn || book.url),
+      documents: uniqueBy(data.documents, bookKey),
     }),
     // 400·401 같은 영구 오류는 재시도 안 하고, 429·5xx만 최대 2번 재시도
     retry: (failureCount, error) =>

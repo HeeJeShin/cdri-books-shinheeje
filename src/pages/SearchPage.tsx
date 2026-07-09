@@ -5,14 +5,20 @@ import { useBookSearch } from '@/features/books/hooks/useBookSearch'
 import { BookSearchForm } from '@/features/books/components/BookSearchForm'
 import { BookList } from '@/features/books/components/BookList'
 import { SearchCountText } from '@/features/books/components/SearchCountText'
-import { getTotalPages } from '@/features/books/constants'
+import {
+  getTotalPages,
+  isBookSearchTarget,
+} from '@/features/books/constants'
 import { NoData } from '@/components/ui/NoData'
 import { Pagination } from '@/components/ui/Pagination'
 
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const query = searchParams.get('q') ?? ''
-  const target = (searchParams.get('target') as BookSearchTarget | null) ?? undefined
+  const rawTarget = searchParams.get('target')
+  const target: BookSearchTarget | undefined = isBookSearchTarget(rawTarget)
+    ? rawTarget
+    : undefined
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
 
   const { data, isLoading, isError, error } = useBookSearch({ query, target, page })

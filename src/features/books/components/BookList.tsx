@@ -1,4 +1,4 @@
-import type { Book } from '@/types/book'
+import { type Book, bookKey } from '@/types/book'
 import { BookListItem } from './BookListItem'
 
 interface BookListProps {
@@ -8,7 +8,7 @@ interface BookListProps {
 export const BookList = ({ books }: BookListProps) => (
   <ul>
     {books.map((book) => (
-      <BookListItem key={book.isbn || book.url} book={book} />
+      <BookListItem key={bookKey(book)} book={book} />
     ))}
   </ul>
 )
